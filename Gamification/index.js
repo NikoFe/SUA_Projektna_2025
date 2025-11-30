@@ -49,6 +49,10 @@ try {
     try {
       const connection =(await mysql.createConnection(dbConfig));
       const id = Math.floor(Math.random() * 100000);
+      console.log("id: ", id)
+      console.log("user_id: ", user_id)
+      console.log("level: ", level)
+      console.log("total_experience_points: ", total_experience_points)
       const [rows] = await connection.execute(
       //  "INSERT INTO uporabnik (id, ime, lokacija, geslo, odobreno) VALUES (?, ?, ?, ?, ?)"
          "INSERT INTO user_experience (id, user_id, level, total_experience_points) VALUES (?, ?, ?, ?)",
@@ -58,6 +62,7 @@ try {
       res.json(rows);
     } catch (error) {
       console.error("Error posting user post:", error);
+
       res.status(500).json({ error: "Internal Server Error" });
     }
   })
@@ -131,7 +136,7 @@ app.delete('/gamification/:id', async(req, res) => {
 
 module.exports = app;
 if (require.main === module) {
-const port = process.env.PORT || 3127;
+const port = process.env.PORT || 5201;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

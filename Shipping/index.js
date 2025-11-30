@@ -106,7 +106,7 @@ app.delete('/shippings/:id', async(req, res) => {
 
 module.exports = app;
 if (require.main === module) {
-const port = process.env.PORT || 3077;
+const port = process.env.PORT || 5200;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

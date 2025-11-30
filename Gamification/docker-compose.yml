@@ -1,0 +1,45 @@
+#version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: gamification_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "5301:5301"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gamification_rest_api
+    ports:
+      - "5201:5201"
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+
+networks:
+  app_network:
+    driver: bridge

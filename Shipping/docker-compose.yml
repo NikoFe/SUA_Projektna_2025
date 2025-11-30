@@ -1,0 +1,45 @@
+#version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: shipping_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "5300:5300"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - shipping_network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shipping_rest_api
+    ports:
+      - "5200:5200"
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - shipping_network
+
+volumes:
+  db_data:
+
+networks:
+  shipping_network:
+    driver: bridge
