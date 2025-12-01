@@ -19,7 +19,7 @@ with app.app_context():
     db.create_all()
 
 # -------------------------
-# HELPER – ORDER SERVICE API
+#  ORDER SERVICE API
 # -------------------------
 
 def get_order_details(order_id):
