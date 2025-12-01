@@ -5,3 +5,11 @@
 body {
   background: #f8f8f8;
 }
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
