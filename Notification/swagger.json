@@ -1,0 +1,146 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Notification Service API",
+    "version": "1.0.0",
+    "description": "API za pošiljanje obvestil o naročilih, plačilih, pošiljanju in napredovanju (gamification)."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:6000",
+      "description": "Notification Service (local)"
+    }
+  ],
+  "paths": {
+    "/notification/order-created": {
+      "post": {
+        "summary": "Obvestilo: naročilo ustvarjeno",
+        "tags": ["Notification"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "order_id": { "type": "integer" }
+                },
+                "required": ["user_id", "order_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obvestilo shranjeno in poslano."
+          }
+        }
+      }
+    },
+    "/notification/order-paid": {
+      "post": {
+        "summary": "Obvestilo: naročilo plačano",
+        "tags": ["Notification"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "order_id": { "type": "integer" },
+                  "payment_id": { "type": "integer" },
+                  "amount": { "type": "number" }
+                },
+                "required": ["user_id", "order_id", "payment_id", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Obvestilo shranjeno in poslano." }
+        }
+      }
+    },
+    "/notification/order-shipped": {
+      "post": {
+        "summary": "Obvestilo: naročilo odposlano",
+        "tags": ["Notification"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "order_id": { "type": "integer" }
+                },
+                "required": ["user_id", "order_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Obvestilo shranjeno in poslano." }
+        }
+      }
+    },
+    "/notification/level-up": {
+      "post": {
+        "summary": "Obvestilo: uporabnik dosegel novi level",
+        "tags": ["Notification"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": { "type": "integer" },
+                  "new_level": { "type": "integer" }
+                },
+                "required": ["user_id", "new_level"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obvestilo shranjeno in poslano."
+          }
+        }
+      }
+    },
+    "/notification/all": {
+      "get": {
+        "summary": "Vrne vse obvestila",
+        "tags": ["Notification"],
+        "responses": {
+          "200": {
+            "description": "Seznam vseh obvestil.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "user_id": { "type": "integer" },
+                      "order_id": { "type": "integer" },
+                      "type": { "type": "string" },
+                      "payload": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
