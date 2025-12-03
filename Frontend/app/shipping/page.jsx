@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
@@ -11,12 +12,12 @@ export default function ShippingPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Dostave</h1>
+      <h1 className="text-3xl font-bold mb-6">Dostave</h1>
 
-      <div className="mt-6 space-y-4">
-        {orders.map((o) => (
+      <div className="space-y-4">
+        {orders.map(o => (
           <div key={o.id} className="bg-white p-4 rounded shadow">
-            <h2 className="font-bold">Order #{o.order_id}</h2>
+            <h3 className="font-bold">Naročilo #{o.order_id}</h3>
             <p>Naslov: {o.address}</p>
             <p>Status: {o.status}</p>
           </div>
