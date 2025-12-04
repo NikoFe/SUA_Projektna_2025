@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "5301:5301"
+      - "6105:6105"
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: gamification_rest_api
     ports:
-      - "5201:5201"
+      - "6005:6005"
     depends_on:
       - database
     environment:

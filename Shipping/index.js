@@ -44,15 +44,15 @@ try {
   app.post('/shippings', async(req, res) => {
 
    console.log("req.body: "+req.body )
-   const {user_id, location, date_created, quantity, price} = req.body
+   const {User_email, location, date_created, quantity, price} = req.body
 
     try {
       const connection =(await mysql.createConnection(dbConfig));
       const id = Math.floor(Math.random() * 100000);
       const [rows] = await connection.execute(
       //  "INSERT INTO uporabnik (id, ime, lokacija, geslo, odobreno) VALUES (?, ?, ?, ?, ?)",
-         "INSERT INTO shipping (id, user_id, location, date_created,  quantity ,price ) VALUES (?, ?, ?, ?, ?, ?)",
-         [id, user_id, location, date_created,quantity ,price]
+         "INSERT INTO shipping (id, User_email, location, date_created,  quantity ,price ) VALUES (?, ?, ?, ?, ?, ?)",
+         [id, User_email, location, date_created,quantity ,price]
       );
       console.log("POST USER result: ",rows)
       res.json(rows);
@@ -106,7 +106,7 @@ app.delete('/shippings/:id', async(req, res) => {
 
 module.exports = app;
 if (require.main === module) {
-const port = process.env.PORT || 5200;
+const port = process.env.PORT || 6004;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

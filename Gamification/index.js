@@ -44,19 +44,20 @@ try {
   app.post('/gamification', async(req, res) => {
 
    //console.log("req.body: "+req.body )
-   const {user_id, level, total_experience_points} = req.body
+   const {User_email, level, total_experience_points} = req.body
 
     try {
       const connection =(await mysql.createConnection(dbConfig));
       const id = Math.floor(Math.random() * 100000);
       console.log("id: ", id)
-      console.log("user_id: ", user_id)
+      console.log("User_email: ", User_email)
       console.log("level: ", level)
       console.log("total_experience_points: ", total_experience_points)
       const [rows] = await connection.execute(
-      //  "INSERT INTO uporabnik (id, ime, lokacija, geslo, odobreno) VALUES (?, ?, ?, ?, ?)"
-         "INSERT INTO user_experience (id, user_id, level, total_experience_points) VALUES (?, ?, ?, ?)",
-         [id, user_id, level,total_experience_points]
+
+        // "INSERT INTO user_experience (id, user_id, level, total_experience_points) VALUES (?, ?, ?, ?)",
+        "INSERT INTO user_experience (id, User_email, level, total_experience_points) VALUES (?, ?, ?, ?)",
+         [id, User_email, level,total_experience_points]
       );
       console.log("POST USER result: ",rows)
       res.json(rows);
@@ -136,7 +137,7 @@ app.delete('/gamification/:id', async(req, res) => {
 
 module.exports = app;
 if (require.main === module) {
-const port = process.env.PORT || 5201;
+const port = process.env.PORT || 6005;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

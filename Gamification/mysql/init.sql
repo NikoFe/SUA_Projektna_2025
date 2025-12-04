@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `user_experience`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_experience` (
   `id` int NOT NULL,
-  `user_id` int NOT NULL,
+  `User_email` VARCHAR(63) NOT NULL,
   `level` int NOT NULL,
   `total_experience_points` int NOT NULL,
   PRIMARY KEY (`id`)
@@ -39,7 +39,7 @@ CREATE TABLE `user_experience` (
 
 LOCK TABLES `user_experience` WRITE;
 /*!40000 ALTER TABLE `user_experience` DISABLE KEYS */;
-INSERT INTO `user_experience` VALUES (1,100,5,5000),(2,200,6,6000);
+INSERT INTO `user_experience` VALUES (1,"user11@gmail.com",5,5000),(2,"user22@gmail.com",6,6000);
 /*!40000 ALTER TABLE `user_experience` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
