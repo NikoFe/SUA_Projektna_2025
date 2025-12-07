@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `user_experience`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_experience` (
-  `id` int NOT NULL,
-  `User_email` VARCHAR(63) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `User_email` VARCHAR(63) NOT NULL UNIQUE,
   `level` int NOT NULL,
   `total_experience_points` int NOT NULL,
   PRIMARY KEY (`id`)
