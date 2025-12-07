@@ -48,16 +48,14 @@ try {
 
     try {
       const connection =(await mysql.createConnection(dbConfig));
-      const id = Math.floor(Math.random() * 100000);
-      console.log("id: ", id)
       console.log("User_email: ", User_email)
       console.log("level: ", level)
       console.log("total_experience_points: ", total_experience_points)
       const [rows] = await connection.execute(
 
         // "INSERT INTO user_experience (id, user_id, level, total_experience_points) VALUES (?, ?, ?, ?)",
-        "INSERT INTO user_experience (id, User_email, level, total_experience_points) VALUES (?, ?, ?, ?)",
-         [id, User_email, level,total_experience_points]
+        "INSERT INTO user_experience (id, User_email, level, total_experience_points) VALUES (NULL, ?, ?, ?)",
+         [ User_email, level,total_experience_points]
       );
       console.log("POST USER result: ",rows)
       res.json(rows);
