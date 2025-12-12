@@ -161,19 +161,14 @@ def order_shipped(oid):
 		print(str(e))
 		return jsonify({"error": "Something went wrong"}), 500
 
-
-@app.route('/dbg-order/<int:oid>', methods=["GET"])
-def debug_order(oid):
-	rep = dbg_order(database, oid)
-	return jsonify({"order": rep}), 200
-
-
 @app.route('/order-payed/<int:oid>', methods=["PUT"])
 def order_payed(oid):
 	body = request.get_json()
 	payment_id = body.get("pid")
+	note = None
 	if not payment_id:
 		u = str(uuid4())
+		note = f'ag_{u}'
 		payment_id = f'ag_{u}'
 	method = body.get("method")
 	if not method:
@@ -182,6 +177,8 @@ def order_payed(oid):
 	try:
 		res = update_payment(database, oid, method, payment_id)
 		if res == 0:
+			if note:
+				return jsonify({"message": f'Successfully updated order {oid}', "warning": f"No external payment id was provided, set to {note}"}), 200
 			return jsonify({"message": f'Successfully updated order {oid}'}), 200
 
 		if res == 1:
