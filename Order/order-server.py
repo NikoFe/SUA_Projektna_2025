@@ -7,7 +7,7 @@ from dbq import *
 from functools import wraps
 import requests
 from datetime import datetime
-
+from uuid import uuid4
 get = os.getenv
 
 load_dotenv()
@@ -108,19 +108,103 @@ def place_order():
 def handle_shipment(): #rename later
 	if request.method == "GET":
 		try:
-			res = fetch_shipped_orders(db)
+			res = fetch_shipped_orders(database)
 
 			return jsonify({ "orders": res, "status": 'success'}), 200
 		except Exception as e:
 			print(str(e))
 			return jsonify({"error": "Something went wrong"}), 500
 
+	else:
+		return jsonify({"error": "Not implemented"}), 501
 
+@app.route('/orders/<int:oid>', methods=["GET"])
+def get_order(oid):
+	try:
+		order = fetch_order(database, oid)
+	except Exception as e:
+		print(e)
+		return jsonify({"Something went wrong"}), 500
+	if not order:
+		return jsonify({"error": f"No record matching id {oid}"}), 400
+
+	return jsonify({"order": order}), 200
+
+
+@app.route('/orders', methods=["GET"])
+def get_all_orders():
+	try:
+		orders = fetch_orders(database)
+	except Exception as e:
+		print(e)
+		return jsonify({"error": "Something went wrong"}), 500
+
+	return jsonify({"orders": orders}), 200
+
+
+@app.route('/order-shipped/<int:oid>', methods=["PUT"])
+def order_shipped(oid):
+	print("Attempting to do stuff")
+	try:
+		res = update_shipment(database, oid)
+		if res == 0:
+			return jsonify({"message": "Update successful"})
+		if res == 1:
+			error = f"Order {oid} doesn't exist"
+		elif res == 2:
+			error = "Order was already shipped"			
+		elif res == 3:
+			error = "Order has not been payed yet"
+
+		return jsonify({"error": error}), 400
+	except Exception as e:
+		print(str(e))
+		return jsonify({"error": "Something went wrong"}), 500
+
+
+@app.route('/dbg-order/<int:oid>', methods=["GET"])
+def debug_order(oid):
+	rep = dbg_order(database, oid)
+	return jsonify({"order": rep}), 200
+
+
+@app.route('/order-payed/<int:oid>', methods=["PUT"])
+def order_payed(oid):
+	body = request.get_json()
+	payment_id = body.get("pid")
+	if not payment_id:
+		u = str(uuid4())
+		payment_id = f'ag_{u}'
+	method = body.get("method")
+	if not method:
+		return jsonify({"error": "'method' field required"}), 400
+
+	try:
+		res = update_payment(database, oid, method, payment_id)
+		if res == 0:
+			return jsonify({"message": f'Successfully updated order {oid}'}), 200
+
+		if res == 1:
+			error = f"Order {oid} doesn't exist"
+		elif res == 2:
+			error = f"Order {oid} is already payed"
+		elif res ==3:
+			error = f"Order {oid} was already shipped"
+		elif res == 4:
+			error = f"{method} is not supported method of payment. Supported methods are: 'Card', 'Cash', 'Paypal', 'GooglePay', 'ApplePay', 'Link', 'Stripe', 'Other'"
+
+		return jsonify({"error": error}), 400
+
+	except Exception as e:
+		print(str(e), "payment")
+		return jsonify({"error": "Something went wrong"}), 500
 
 
 
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", port=5000, debug=True)
+
+
 
 
 
