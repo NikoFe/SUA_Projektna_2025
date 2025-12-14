@@ -9,6 +9,7 @@ import requests
 from datetime import datetime
 from uuid import uuid4
 get = os.getenv
+from auth import build_jwt_verifier
 
 load_dotenv()
 
@@ -20,6 +21,10 @@ MYSQL_USER = get("MYSQL_USER")
 MYSQL_PSWD = get("MYSQL_PASSWORD")
 MYSQL_PORT = int(get("MYSQL_PORT"))
 MYSQL_DATABASE = get("MYSQL_DATABASE")
+ISSUER=get("ISSUER")
+AUDIANCE=get("AUDIANCE")
+jwks_URL=get("JWKS")
+print(jwks_URL, AUDIANCE, ISSUER)
 HOST = get("HOST")
 PORT = int(get("PORT"))
 DEBUG = get("DEBUG").lower() in  ('true', '1')
@@ -49,8 +54,12 @@ tOrder = {
 }
 
 
-# TODO request auth token, not yet JWT but think about this. Frontend  
-
+require_jwt = build_jwt_verifier(
+    issuer=ISSUER, 
+    audience=AUDIANCE,
+    jwks_url=jwks_URL,
+    jwks_ttl_seconds=300,
+)
 
 def gameify(data):
 	try:
@@ -65,9 +74,8 @@ def gameify(data):
 		print(e)
 		return None
 
-
+@require_jwt()
 @app.route('/order', methods=["POST"])
-#@log_access
 def place_order():
 	body = request.get_json()
 
@@ -103,7 +111,7 @@ def place_order():
 		#print(dishes)
 		return jsonify({'error': 'Something went wrong'}), 500
 
-
+@require_jwt()
 @app.route('/shippings', methods=["GET", "POST"])
 def handle_shipment(): #rename later
 	if request.method == "GET":
@@ -118,6 +126,7 @@ def handle_shipment(): #rename later
 	else:
 		return jsonify({"error": "Not implemented"}), 501
 
+@require_jwt()
 @app.route('/orders/<int:oid>', methods=["GET"])
 def get_order(oid):
 	try:
@@ -132,6 +141,7 @@ def get_order(oid):
 
 
 @app.route('/orders', methods=["GET"])
+@require_jwt()
 def get_all_orders():
 	try:
 		orders = fetch_orders(database)
@@ -143,6 +153,7 @@ def get_all_orders():
 
 
 @app.route('/order-shipped/<int:oid>', methods=["PUT"])
+@require_jwt()
 def order_shipped(oid):
 	print("Attempting to do stuff")
 	try:
@@ -162,6 +173,7 @@ def order_shipped(oid):
 		return jsonify({"error": "Something went wrong"}), 500
 
 @app.route('/order-payed/<int:oid>', methods=["PUT"])
+@require_jwt()
 def order_payed(oid):
 	body = request.get_json()
 	payment_id = body.get("pid")
@@ -199,7 +211,7 @@ def order_payed(oid):
 
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=5000, debug=True)
+	app.run(host="0.0.0.0", port=6000, debug=True)
 
 
 
