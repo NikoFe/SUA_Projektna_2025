@@ -1,20 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
+import toast from "react-hot-toast";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:6006/notification/all")
+    const token = localStorage.getItem("access_token");
+
+    api.notification
+      .get("/notification/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
-        console.log("NOTIFICATIONS:", res.data); // 👈 debug
         setNotifications(res.data);
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response?.status === 401) {
+          toast.error("Seja je potekla. Prosimo prijavite se ponovno.");
+        } else {
+          toast.error("Napaka pri pridobivanju obvestil.");
+        }
       });
   }, []);
 
@@ -22,28 +32,17 @@ export default function NotificationsPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Obvestila</h1>
 
-      {notifications.length === 0 && (
-        <p>Ni obvestil.</p>
-      )}
+      {notifications.length === 0 && <p>Ni obvestil.</p>}
 
       <ul className="space-y-3">
         {notifications.map((n) => (
-          <li
-            key={n.id}
-            className="border rounded p-4 bg-gray-50"
-          >
-            <p>
-              <strong>Tip:</strong> {n.type}
-            </p>
-            <p>
-              <strong>Naročilo:</strong> {n.order_id}
-            </p>
-            <p>
-              <strong>Uporabnik:</strong> {n.user_id}
-            </p>
+          <li key={n.id} className="border rounded p-4">
+            <p><b>Tip:</b> {n.type}</p>
+            <p><b>Naročilo:</b> {n.order_id}</p>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+

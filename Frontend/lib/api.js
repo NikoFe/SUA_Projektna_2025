@@ -9,3 +9,14 @@ export const api = {
   gamification: axios.create({ baseURL: process.env.NEXT_PUBLIC_GAMIFICATION }),
   notification: axios.create({ baseURL: process.env.NEXT_PUBLIC_NOTIFICATION }),
 };
+
+//  JWT interceptor (DODANO)
+Object.values(api).forEach((instance) => {
+  instance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+});

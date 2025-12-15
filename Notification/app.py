@@ -5,7 +5,10 @@ from db import db
 from models import Notification
 from mq import publish_message
 import requests
+from auth import jwt_required
 from flask_cors import CORS
+
+
 
 
 app = Flask(__name__)
@@ -124,6 +127,7 @@ def level_up():
 # TEST endpoint
 # -------------------------
 @app.get("/notification/all")
+@jwt_required
 def get_all():
     notifs = Notification.query.all()
     return jsonify([{
