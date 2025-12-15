@@ -1,10 +1,10 @@
 #version: '3.8'
 
 services:
-  database:
+  database-Notification:
     build:
-      context: ./mdysql
-      dockerfile: Dockerfile
+      context: ./mysql
+      image: mydockerhubuser/auth-service:1.0.0
     container_name: gamification_mysql_db
     restart: always
     environment:
@@ -16,7 +16,7 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - app_network
-  app:
+  backend-Notification:
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,7 +24,7 @@ services:
     ports:
       - "6005:6005"
     depends_on:
-      - database
+      - database-Notification
     environment:
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}

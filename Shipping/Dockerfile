@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Set working directory
-WORKDIR /usr/src/app
+#WORKDIR /usr/src/app
 
 # Copy package files first (for better caching)
 COPY package*.json ./

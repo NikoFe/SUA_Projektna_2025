@@ -1,35 +1,76 @@
 #version: '3.8'
 
+
+
 services:
-  database-Notification:
+
+  #**** Ta del kopirata za svojo mikrostoritev (vse do ***** )
+  gamification_database:
     build:
-      context: ./mysql
-      image: mydockerhubuser/auth-service:1.0.0
-    container_name: gamification_mysql_db
+      context: ./Gamification/mysql  #tu specificiraj pot do baze mikrostoritve
+      dockerfile: ./Dockerfile
+    container_name: gamification_mysql_db #ime containerja za svojo bazo
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_GAMIFICATION}
+      MYSQL_DATABASE: ${DB_NAME_GAMIFICATION}
     ports:
       - "6105:6105"
     volumes:
-      - db_data:/var/lib/mysql
+      - gamification_db_data:/var/lib/gamification_mysql
     networks:
       - app_network
-  backend-Notification:
+  gamification_backend:
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: gamification_rest_api
+      context: ./Gamification #tu specificiraj pot do mikrostoritve
+      dockerfile: ./Dockerfile
+    container_name: gamification_backend #ime backenda za svojo mikrostoritev
     ports:
-      - "6005:6005"
+      - "6005:6005" #tu podajta port ki ga storitev uporablja
     depends_on:
-      - database-Notification
+      - gamification_database #tu podatjta ime containerja za bazo storitve (nad tem containerjem), na katero je odvisna mikrostoritev
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST_GAMIFICATION}
+      - DB_USER=${DB_USER_GAMIFICATION}
+      - DB_PASSWORD=${DB_PASSWORD_GAMIFICATION}
+      - DB_NAME=${DB_NAME_GAMIFICATION}
+
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app_network
+#*******   
+
+  shipping_database:
+    build:
+      context: ./Shipping/mysql 
+      dockerfile: ./Dockerfile
+    container_name: shipping_mysql_db 
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD_SHIPPING}
+      MYSQL_DATABASE: ${DB_NAME_SHIPPING}
+    ports:
+      - "6104:6104"
+    volumes:
+      - shipping_db_data:/var/lib/gamification_mysql
+    networks:
+      - app_network
+  shipping_backend:
+    build:
+      context: ./Shipping 
+      dockerfile: ./Dockerfile
+    container_name: shipping_backend 
+    ports:
+      - "6004:6004" 
+    depends_on:
+      - shipping_database 
+    environment:
+      - DB_HOST=${DB_HOST_SHIPPING}
+      - DB_USER=${DB_USER_SHIPPING}
+      - DB_PASSWORD=${DB_PASSWORD_SHIPPING}
+      - DB_NAME=${DB_NAME_SHIPPING}
 
     volumes:
       - .:/usr/src/app
@@ -38,8 +79,10 @@ services:
       - app_network
 
 volumes:
-  db_data:
-
+  gamification_db_data:
+  shipping_db_data:
 networks:
   app_network:
     driver: bridge
+
+    

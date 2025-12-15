@@ -3,7 +3,9 @@ const app = express()
 const cors = require("cors");
 const mysql = require("mysql2/promise");
 const setupSwagger = require('./swagger');
-
+/////
+//const { jwtRequired } = require("./auth");
+/////
 
 if (process.env.NODE_ENV === 'test') {
   require('dotenv').config({ path: './.env.test' });
@@ -71,6 +73,7 @@ try {
  *         description: Get user experience and level for user with specified id
  *
  */
+
 
 app.get('/gamification/:id',async (req, res) => {
 id= parseInt(req.params.id)
