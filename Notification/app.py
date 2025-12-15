@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from db import db
@@ -13,6 +14,21 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+app.config["SWAGGER"] = {
+    "title": "Notification Service API",
+    "uiversion": 3,
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header. Format: Bearer <token>"
+        }
+    }
+}
+
+Swagger(app)
 
 
 # SQLAlchemy povezava

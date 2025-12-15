@@ -7,3 +7,4 @@ python-jose
 pika
 flask-swagger-ui
 gunicorn
+flasgger
