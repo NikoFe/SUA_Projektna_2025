@@ -5,11 +5,15 @@ from db import db
 from models import Notification
 from mq import publish_message
 import requests
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
+
 
 # SQLAlchemy povezava
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}/{Config.MYSQL_DB}"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///notifications.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -132,4 +136,4 @@ def get_all():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6000, debug=True)
+    app.run(host="0.0.0.0", port=6006, debug=True)

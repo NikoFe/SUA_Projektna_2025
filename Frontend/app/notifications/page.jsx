@@ -1,25 +1,49 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { api } from "../../lib/api";
+import axios from "axios";
 
 export default function NotificationsPage() {
-  const [list, setList] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    api.notification.get("/notification/all").then(res => setList(res.data));
+    axios
+      .get("http://localhost:6006/notification/all")
+      .then((res) => {
+        console.log("NOTIFICATIONS:", res.data); // 👈 debug
+        setNotifications(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Obvestila</h1>
-      <div className="mt-6 space-y-4">
-        {list.map((n) => (
-          <div key={n.id} className="p-4 bg-white shadow rounded">
-            <p className="font-semibold">{n.type}</p>
-            <pre className="text-sm mt-2 bg-gray-100 p-2 rounded">{JSON.stringify(n.payload, null, 2)}</pre>
-          </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Obvestila</h1>
+
+      {notifications.length === 0 && (
+        <p>Ni obvestil.</p>
+      )}
+
+      <ul className="space-y-3">
+        {notifications.map((n) => (
+          <li
+            key={n.id}
+            className="border rounded p-4 bg-gray-50"
+          >
+            <p>
+              <strong>Tip:</strong> {n.type}
+            </p>
+            <p>
+              <strong>Naročilo:</strong> {n.order_id}
+            </p>
+            <p>
+              <strong>Uporabnik:</strong> {n.user_id}
+            </p>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
