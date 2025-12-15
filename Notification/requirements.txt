@@ -1,5 +1,9 @@
-Flask
-Flask-SQLAlchemy
+flask
+flask-sqlalchemy
+flask-cors
 pymysql
-pika
 requests
+python-jose
+pika
+flask-swagger-ui
+gunicorn
